@@ -21,7 +21,7 @@ addLogBtn.on('click',function(){
 		return;
 	}
 	var now = timeSpan.html();
-	logText.val('# '+now+' #\n'+log+"\n"+logText.val());
+	logText.val(logText.val()+' | '+now+' | '+log+' |\n');
 	
 	saveOneLog();
 })
@@ -30,11 +30,14 @@ function saveOneLog(){
   if (fileEntry) {
     writeEditorToFile(fileEntry);
   } else {
-	  var title = new Date().Format("yyyy-MM-dd")+".log";
+	  var d = new Date().Format("yyyy-MM-dd");
+	  var title = d+".log";
 	  var config = {type: 'saveFile', suggestedName: title};
     chrome.fileSystem.chooseEntry(config, function(theFileEntry){
 	  console.log(theFileEntry)
 	  fileEntry = theFileEntry;
+	  //初始化时加入table表头
+	  logText.val('# '+d +'\n ---------- \n | 时间 | 事件 |\n | ------ | -------| \n | '+ timeSpan.html()+' | 初始化写入 |\n');
 	  writeEditorToFile(theFileEntry);
 	});
   }
@@ -62,6 +65,7 @@ function writeEditorToFile(theFileEntry) {
     //    handleDocumentChange(theFileEntry.fullPath);
 		msgOut.html("写入成功");
         console.log("Write completed.");
+		logInput.val('');
       };
       fileWriter.write(blob);
     }
@@ -91,6 +95,9 @@ Date.prototype.Format = function (fmt) { //author: meizz
 function tick(){
 	var now = new Date().Format("yyyy-MM-dd hh:mm:ss");
 	timeSpan.html(now);
+	if(logInput.val()==''){
+		msgOut.html('');
+	}
 }
 
 setInterval(tick,1000);
