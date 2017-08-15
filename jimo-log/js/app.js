@@ -31,13 +31,13 @@ function saveOneLog(){
     writeEditorToFile(fileEntry);
   } else {
 	  var d = new Date().Format("yyyy-MM-dd");
-	  var title = d+".log";
+	  var title = d+".txt";
 	  var config = {type: 'saveFile', suggestedName: title};
     chrome.fileSystem.chooseEntry(config, function(theFileEntry){
 	  console.log(theFileEntry)
 	  fileEntry = theFileEntry;
 	  //初始化时加入table表头
-	  logText.val('# '+d +'\n ---------- \n | 时间 | 事件 |\n | ------ | -------| \n | '+ timeSpan.html()+' | 初始化写入 |\n');
+	  logText.val('# '+d +'\n ---------- \n | 时间 | 事件 |\n | ------ | -------| \n | '+ timeSpan.html()+' | 初始化写入 |\n| '+timeSpan.html()+' | '+logInput.val()+' |\n');
 	  writeEditorToFile(theFileEntry);
 	});
   }
