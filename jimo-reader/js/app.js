@@ -8,6 +8,7 @@ var App = {
 var btn_open_dir = $('#btn_open');
 var ul_file_list = $('#file_list');
 var li_root = $('#li_root');
+var div_file_view = $("#file_view");
 
 var fileEntry = null;
 var entries = [];
@@ -51,8 +52,6 @@ function loadDirEntry(_chosenEntry) {
     var bfsReadEntries = function(reader) {
 	   reader.readEntries (function(results) {
 		  results.forEach(function(item) { 
-			//entries.push(item.fullPath.replace(reg,""))
-			entries.push(item);
 			if(item.isDirectory){	
 				bfsReadEntries(item.createReader());
 				//console.log(item.fullPath)
@@ -65,7 +64,7 @@ function loadDirEntry(_chosenEntry) {
 		  });
 	   }, errorHandler);
     };
-    bfsReadEntries(dirReader); // 
+    bfsReadEntries(dirReader); //开始读取目录
 	
 	setTimeout(makeMenu,100);
 //	setTimeout(displayEntryData,1000);
@@ -78,13 +77,15 @@ function makeMenu(){
 	console.log(dir)
 	console.log(files)
 	var tmp = [];
+	var p = 0;//entries的下标
 	while(dir.length>0){
 		var dEntry = dir.shift();
 		appendDirItem(dEntry);
 		for(var j=0;j<files.length;j++){
 			var fEntry = files[j];
 			if(isDirsFile(dEntry.fullPath,fEntry.fullPath)){
-				appendFileItem(fEntry);
+				appendFileItem(fEntry,p);
+				entries[p++] = fEntry;
 				tmp.push(j);
 			}else{
 				
@@ -94,10 +95,12 @@ function makeMenu(){
 	//追加最顶层的文件
 	for(var k=0;k<files.length;k++){
 		if(tmp.indexOf(k)<0){
-			appendTopFileItem(files[k]);
+			appendTopFileItem(files[k],p);
+			entries[p++] = files[k];
 		}
 	}
 }
+
 //判断该文件是否是该文件夹的
 function isDirsFile(d_path,f_path){
 	return f_path.substr(0,f_path.lastIndexOf('/'))==d_path;
@@ -108,37 +111,54 @@ function appendDirItem(dEntry){
 	ul_file_list.append("<li class='li-dir'><strong>"+dEntry.fullPath+"</strong></li>");
 }
 
-//产生一个文件菜单
-function appendFileItem(fEntry){
-	ul_file_list.append("<li class='li-file'><a href='javascript:;'>"+fEntry.name+"</a></li>");
+//产生一个文件菜单,p是下标
+function appendFileItem(fEntry,p){
+	ul_file_list.append("<li class='li-file' eid='"+p+"'><a href='#'>"+fEntry.name+"</a></li>");
 }
 
 //产生一个顶层文件菜单
-function appendTopFileItem(fEntry){
-	ul_file_list.append("<li class='li-file li-file-top'><a href='javascript:;'>"+fEntry.name+"</a></li>");
+function appendTopFileItem(fEntry,p){
+	ul_file_list.append("<li class='li-file li-file-top' eid='"+p+"'><a href='#'>"+fEntry.name+"</a></li>");
 }
 
-function displayEntryData() {
-	entries.sort(function(a,b){
-		return a.fullPath > b.fullPath;
-	})
-	//console.log(entries)
-	/*console.log(theEntry)
-  if (theEntry.isFile) {
-    chrome.fileSystem.getDisplayPath(theEntry, function(path) {
-      //document.querySelector('#file_path').value = path;
-    });
-    theEntry.getMetadata(function(data) {
-      //document.querySelector('#file_size').textContent = data.size;
-    });    
+
+//单击文件项时加载文件内容
+ul_file_list.on('click','.li-file',function(){
+	var eid = parseInt($(this).attr("eid"));
+	var fEntry = entries[eid];
+	//console.log(fEntry)
+	if (fEntry.isFile) {
+		/*
+		chrome.fileSystem.getDisplayPath(theEntry, function(path) {
+		  //document.querySelector('#file_path').value = path;
+		});*/
+		fEntry.file(function(file) {
+		  var reader = new FileReader();
+		  
+		  reader.onerror = errorHandler;
+		  reader.onload = function(e){
+			  //console.log(e)
+			  handleFile(e.target.result,fEntry.name);//处理并显示文件内容
+		  }
+		  
+		  reader.readAsText(file);
+		});    
   }
-  else {
-    //document.querySelector('#file_path').value = theEntry.fullPath;
-    //document.querySelector('#file_size').textContent = "N/A";
-  }*/
+})
+
+function handleFile(content,file_type){
+	var type = file_type.substr(file_type.lastIndexOf(".")+1);//提取后缀名 
+	switch(type){
+		case "md":
+		var converter = new showdown.Converter();
+		var html = converter.makeHtml(content);
+		div_file_view.html(html);
+		break;
+		default:
+		div_file_view.html(content);
+		break;
+	}
 }
-
-
 
 //当input focus时清除提示信息
 //TODO
