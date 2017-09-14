@@ -28,6 +28,53 @@ $(document).bind('keydown', 'l', function(){
 	$(window).scrollTo({right:"+=100px"});
 });
 
+//esc:
+$(document).bind('keydown', 'esc', function(){
+	console.log('esc')
+	//隐藏cmdDiv
+	$('#jimo-cmd-div').hide()
+});
+
+/**
+:(冒号)=shift+;
+在VIM里用于在正常模式执行命令，在这里沿用；
+思路是在左下角弹出执行命令的输入框，回车执行相应命令
+**/
+var createdCmdDiv = false,clearCmdIput = false;
+$(document).bind('keydown', 'shift+;', function(){
+	console.log('shift+;')
+	//新增div元素包括输入框，使用绝对定位在左下角
+	if(!createdCmdDiv){
+		var cmdDiv = '<div id="jimo-cmd-div" style="width:150px;height:25px;background:#000;position:fixed;bottom:0px;left:0px;">'
+		+'<b>:</b><input id="jimo-cmd-input" type="text" style="width:90%;border:0px solid #000;background:#000;"/>'
+		+'</div>'
+		$("body").append(cmdDiv);		
+		createdCmdDiv = true;
+	}else{
+		$('#jimo-cmd-div').show()
+	}
+	$("#jimo-cmd-input").focus();
+	clearCmdIput = true;//按下shift+;时会把:写入input
+});
+
+//监听cmdInput的按键命令
+$("body").on('keydown','#jimo-cmd-input', function(e){
+	switch(e.keyCode){
+	case 13://enter
+		handleCmd();
+	break;
+	case 27://esc
+		$('#jimo-cmd-div').hide()
+	break;
+	}
+});
+
+//处理命令
+function handleCmd(){
+	var cmd = $("#jimo-cmd-input").val();
+	
+}
+
 /**
 处理两个都是字母的情况
 **/
@@ -58,5 +105,8 @@ function inTime(){
 
 
 $(document).keyup(function(e){
-	
+	if(clearCmdIput){
+		$("#jimo-cmd-input").val("");
+		clearCmdIput = false;
+	}
 })
