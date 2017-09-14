@@ -1,0 +1,25 @@
+{
+    "manifest_version": 2,
+    "name": "jimo-vim",
+    "version": "0.0.1",
+	"icons":{
+		"128": "assets/icon_128.png"
+	},
+	"description": "made by jimo",
+    "background": { "scripts": ["js/jquery.min.js"] },
+    "browser_action": {
+        "default_icon": "assets/ico.png",
+        "default_title": "jimo-vim", 
+        "default_popup": "popup/popup.html"
+    },
+    "permissions" : [
+		"http://*/*",
+		"activeTab", 
+		"tabs" 
+	],
+    "content_scripts":[{
+        "matches":["http://*/**","https://*/*"],
+        "js":["js/jquery.min.js","js/jquery.scroll.js","js/jquery.hotkeys.js","app.js"],
+        "run_at":"document_end"
+    }]
+}
