@@ -76,6 +76,9 @@ output {
 	margin: 10px auto;
 	width:20%;
 }
+#open_file{
+	float:right;
+}
 </style>
 </head>
 <body>
@@ -94,7 +97,10 @@ Path: <input type="text" id="file_path" readonly>
 
 <textarea id="text_log"></textarea>
 
-<p><button id="save_file" disabled>Save As</button></p>
+<p>
+<button id="save_file" disabled>Save As</button>
+<button id="open_file">Open Log File</button>
+</p>
 
 <script src="js/jquery.min.js"></script>
 <script src="js/app.js"></script>
