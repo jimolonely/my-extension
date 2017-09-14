@@ -3,6 +3,7 @@ var addLogBtn = $("#btn_add_log");
 var logInput = $("#input_log");
 var timeSpan = $("#time_now");
 var msgOut = $("#msg_out");
+var openFileBtn = $("#open_file");
 var filePathInput = $("#file_path");
 var logText = $("#text_log");
 
@@ -12,6 +13,43 @@ function errorHandler(e) {
   console.error(e);
 }
 
+//打开文件
+openFileBtn.on('click',function(){
+	var accepts = [{
+		mimeTypes: ['text/*'],
+		extensions: ['js', 'css', 'txt', 'html', 'xml', 'tsv', 'csv', 'rtf']
+	}];
+	chrome.fileSystem.chooseEntry({type: 'openFile', accepts: accepts}, function(theEntry) {
+		if (!theEntry) {
+			msgOut.html('No file selected.');
+		    return;
+		}
+		loadFileContent(theEntry);
+	});
+})
+
+//将文件内容读出来
+function loadFileContent(_chosenEntry) {
+	fileEntry = _chosenEntry;
+	fileEntry.file(function(file) {
+		readAsText(fileEntry, function(result) {
+			logText.val(result);
+		});
+	});
+}
+
+function readAsText(fileEntry, callback) {
+  fileEntry.file(function(file) {
+    var reader = new FileReader();
+
+    reader.onerror = errorHandler;
+    reader.onload = function(e) {
+      callback(e.target.result);
+    };
+
+    reader.readAsText(file);
+  });
+}
 
 //点击添加一条日志
 addLogBtn.on('click',function(){
