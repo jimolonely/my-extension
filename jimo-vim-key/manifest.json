@@ -6,16 +6,15 @@
 		"128": "assets/icon_128.png"
 	},
 	"description": "made by jimo",
-    "background": { "scripts": ["js/jquery.min.js"] },
+    "background": { "scripts": ["background.js"] },
     "browser_action": {
         "default_icon": "assets/ico.png",
         "default_title": "jimo-vim", 
         "default_popup": "popup/popup.html"
     },
     "permissions" : [
-		"http://*/*",
 		"activeTab", 
-		"tabs" 
+		"tabs"
 	],
     "content_scripts":[{
         "matches":["http://*/**","https://*/*"],
