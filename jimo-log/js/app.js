@@ -6,12 +6,21 @@ var msgOut = $("#msg_out");
 var openFileBtn = $("#open_file");
 var filePathInput = $("#file_path");
 var logText = $("#text_log");
+var saveAllBtn = $("#save_file");
 
 var fileEntry = null;
 
 function errorHandler(e) {
   console.error(e);
 }
+
+//save all
+saveAllBtn.on('click',function(){
+	var val = logText.val();
+	if(val&&val!=""){
+		saveOneLog();
+	}
+});
 
 //打开文件
 openFileBtn.on('click',function(){
