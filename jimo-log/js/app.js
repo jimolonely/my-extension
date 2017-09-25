@@ -62,7 +62,17 @@ function readAsText(fileEntry, callback) {
 
 //点击添加一条日志
 addLogBtn.on('click',function(){
-	
+	addOneLog();
+})
+
+//回车添加一条日志
+logInput.on('keydown',function(e){
+	if(e.keyCode==13){
+		addOneLog();
+	}
+})
+
+function addOneLog(){
 	var log = logInput.val();
 	if(!log||log==""){
 		return;
@@ -71,7 +81,7 @@ addLogBtn.on('click',function(){
 	logText.val(logText.val()+' | '+now+' | '+log+' |\n');
 	
 	saveOneLog();
-})
+}
 
 function saveOneLog(){
   if (fileEntry) {
