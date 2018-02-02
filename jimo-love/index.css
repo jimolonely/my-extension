@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.float-img img {
+    position: absolute;
+    z-index: -1;
+}
+
+.content {
+    color: #ffffff;
+    font-size: 40px;
+}
+
+body {
+    background: url(1.jpg) top center no-repeat;
+    background-size: cover;
+}
+
+#code {
+    z-index: 1000;
+    background: rgb(247, 245, 245);
+    width: 300px;
+}
